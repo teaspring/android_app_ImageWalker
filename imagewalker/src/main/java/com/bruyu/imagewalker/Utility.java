@@ -11,21 +11,18 @@ public class Utility {
         float tmp = list.get(i);
         list.set(i, list.get(j));
         list.set(j, tmp);
-        return;
     }
 
     public static void swapIntInList(List<Integer> list, int i, int j){
         int tmp = list.get(i);
         list.set(i, list.get(j));
         list.set(j, tmp);
-        return;
     }
 
     public static void swapStrInList(List<String> list, int i, int j){
         String tmp = new String(list.get(i));
         list.set(i, list.get(j));
         list.set(j, tmp);
-        return;
     }
 
     public void quickSort(List<Integer> keys, List<String> values){

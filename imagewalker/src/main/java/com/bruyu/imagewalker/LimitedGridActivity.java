@@ -111,7 +111,6 @@ public class LimitedGridActivity extends BaseGridActivity {
     private Intent setIntentForDynamicAdapter(){
         Intent intent = new Intent();
         intent.putStringArrayListExtra(DynamicImageFileAdapter.RAWIMAGELIST, testImgNameList);
-
         return intent;
     }
 
@@ -139,7 +138,7 @@ public class LimitedGridActivity extends BaseGridActivity {
         int imgCount = testImgNameList.size() - 1; // remove base image from the repository
 
         if(status == imgCount){
-            Toast.makeText(this, new String("search in all test images is done!"),
+            Toast.makeText(this, "search in all test images is done!",
                     Toast.LENGTH_SHORT).show();
         }else if(status < imgCount){
             StringBuilder builder = new StringBuilder("currently compared ");
@@ -159,7 +158,7 @@ public class LimitedGridActivity extends BaseGridActivity {
 
         if(status == count){
             progressBar = 100;  // 100%
-            Toast.makeText(this, new String("Search in " + count + " images is done."),
+            Toast.makeText(this, "Search in " + count + " images is done.",
                     Toast.LENGTH_SHORT).show();
             Log.d(TAG, "search in " + count + " images is done");
             return;
@@ -212,7 +211,6 @@ public class LimitedGridActivity extends BaseGridActivity {
         builder.append("% search is done.");
 
         Toast.makeText(this, builder.toString(), Toast.LENGTH_SHORT).show();
-        return;
     }
 
     /*

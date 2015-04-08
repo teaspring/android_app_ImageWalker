@@ -59,7 +59,7 @@ public class BaseGridActivity extends Activity{
             retainFragment.mRetainCache = mMemoryCache;
         }
 
-        mPlaceHolderBitmap = decodeSampledBitmapFromResource(
+        mPlaceHolderBitmap = Helper.decodeSampledBitmapFromResource(
                 getResources(),
                 R.drawable.allblack,
                 BaseGridActivity.ThumbnailWidth,
@@ -76,35 +76,6 @@ public class BaseGridActivity extends Activity{
 
     public static Bitmap getBitmapFromMemCache(String key){
         return mMemoryCache.get(key);
-    }
-
-    /*
-     * this method is invoked in AsyncTask.doInBackground() so it must be static
-     * */
-    public static Bitmap decodeSampledBitmapFromFile(String filePath,
-                      int reqWidth, int reqHeight){
-        /// first avoid allocate memory to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
-
-        options.inSampleSize = Helper.calcInSampleSizeDuo(options, reqWidth, reqHeight);
-
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(filePath, options);
-    }
-
-    public static Bitmap decodeSampledBitmapFromResource(Resources resources, int resId,
-             int reqWidth, int reqHeight){
-        /// first avoid allocate memory to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(resources, resId, options);
-
-        options.inSampleSize = Helper.calcInSampleSizeDuo(options, reqWidth, reqHeight);
-
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(resources, resId, options);
     }
 
     /*
@@ -144,8 +115,7 @@ public class BaseGridActivity extends Activity{
         /// decode image in background
         protected Bitmap doInBackground(String...params){
             data = params[0];  // image file path
-            final Bitmap bitmap =  decodeSampledBitmapFromFile(data, reqWidth, reqHeight);
-            return bitmap;
+            return Helper.decodeSampledBitmapFromFile(data, reqWidth, reqHeight);
         }
 
         /*

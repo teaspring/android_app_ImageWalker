@@ -109,9 +109,8 @@ public class ImageTask implements TaskRunnableCompareMethods{
     /*
      * Generate segment masks of given Size of image Mat
      * */
-    private static List<Mat> generateSegMasks(int height, int width){
+    private static List<Mat> generateSegMasks(final int h, final int w){
         List<Mat> masks = new ArrayList<>();
-        int h = height, w = width;
         int cx = w / 2, cy = h / 2;
         Size axes = new Size(w / 8 * 3, h / 8 * 3); // half of size of ellipse's main axes
 

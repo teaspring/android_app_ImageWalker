@@ -13,15 +13,15 @@ public class MaxHeap {
     private List<String> Values;
     private int N;
     private boolean heapified;
-    private static Object obj = new Object();
+    private static final Object obj = new Object();
 
     public MaxHeap(){
         this(DEFAULTSIZE);
     }
 
     public MaxHeap(int n){
-        Keys = new ArrayList<Integer>();
-        Values = new ArrayList<String>();
+        Keys = new ArrayList<>();
+        Values = new ArrayList<>();
         N = n;
         heapified = false;
     }
@@ -57,7 +57,6 @@ public class MaxHeap {
         synchronized(obj) {
             heapified = true;
         }
-        return;
     }
 
     /*
@@ -130,7 +129,6 @@ public class MaxHeap {
             }
             heapified = false;  // don't forget it!
         }
-        return;
     }
 
     /*

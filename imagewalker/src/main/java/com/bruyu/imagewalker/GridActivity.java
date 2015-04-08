@@ -27,7 +27,6 @@ public class GridActivity extends BaseGridActivity {
     private static final String TAG = "::GridActivity";
     public static final String imgPath = "/storage/sdcard0/DCIM/Camera";
     public static final Pattern imgPattern = Pattern.compile("\\.jpg$");
-    public static final boolean fromRes = false;
 
     private ImageFileAdapter mAdapter;
     private ArrayList<String> imgNameList;

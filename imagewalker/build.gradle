@@ -11,19 +11,19 @@ android {
         versionCode 1
         versionName "1.0"
     }
-	sourceSets{
-		main{
-			java{
-				exclude '**/unittest/MaxHeapUnitTest.java'
+    sourceSets{
+        main{
+            java{
+                exclude '**/unittest/MaxHeapUnitTest.java'
                 exclude '**/unittest/build.xml'
-			}
-		}
+            }
+        }
         androidTest{
             java{
                 exclude '**/ApplicationTest.java'
             }
         }
-	}
+    }
     buildTypes {
         release {
             minifyEnabled false

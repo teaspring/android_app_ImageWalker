@@ -29,8 +29,11 @@ public class ImageDetailActivity extends FragmentActivity {
     public static final String IMG_FILELIST = "IMGFILELIST";
 
     private int itemPosition;
+
     private ArrayList<String> imgNameList;
+
     private ViewPager mPager;
+
     private PagerAdapter mPagerAdapter;
 
     @Override
@@ -50,7 +53,7 @@ public class ImageDetailActivity extends FragmentActivity {
         mPager = (ViewPager)findViewById(R.id.pager);
         mPagerAdapter = new ImageDetailPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        mPager.setCurrentItem(itemPosition);  /* without this, the ViewPager will display from 0 */
+        mPager.setCurrentItem(itemPosition);
     }
 
     @Override

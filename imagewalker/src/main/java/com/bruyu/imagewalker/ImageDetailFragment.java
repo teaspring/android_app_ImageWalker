@@ -19,14 +19,12 @@ import java.lang.ref.WeakReference;
 public class ImageDetailFragment extends Fragment{
     public static final String TAG = "ImageDetailFragment";
 
-    public static final String IMG_RESID = "RESID";
     public static final String IMG_FILENAME = "FILENAME";
 
     // official MI1S resolution is around 480 * 800
     public static final int FullWidth = 480;
     public static final int FullHeight = 800;
 
-    private int resId;
     private String fileName;
     private ImageView mImageView;
 
@@ -36,32 +34,17 @@ public class ImageDetailFragment extends Fragment{
                 = (ViewGroup)inflater.inflate(R.layout.detail_image_fragment, container, false);
         mImageView = (ImageView)rootView.findViewById(R.id.imageDetail);
 
-        if(GridActivity.fromRes) {
-            loadBitmapFromRes(resId, mImageView, FullWidth, FullHeight);
-        }else if(!GridActivity.fromRes){
-            BitmapFarmerTask task = new BitmapFarmerTask(mImageView);
-            task.execute(fileName);
-        }
+        BitmapFarmerTask task = new BitmapFarmerTask(mImageView);
+        task.execute(fileName);
 
         return rootView;
-    }
-
-    /*
-    * without AsyncTask and memory cache now
-    * */
-    public void loadBitmapFromRes(int resId, ImageView imageView, int width, int height){
-        Bitmap bitmap = BaseGridActivity.decodeSampledBitmapFromResource(
-                getResources(), resId, width, height);
-        imageView.setImageBitmap(bitmap);
     }
 
     /*
     * set necessary arguments by data adapter
     * */
     public void setArguments(Bundle args){
-        if(args.containsKey(IMG_RESID)){
-            resId = args.getInt(IMG_RESID);
-        }else if(args.containsKey(IMG_FILENAME)){
+        if(args.containsKey(IMG_FILENAME)){
             fileName = args.getString(IMG_FILENAME);
         }
     }
@@ -90,8 +73,7 @@ public class ImageDetailFragment extends Fragment{
 
         protected Bitmap doInBackground(String...params){
             data = params[0];
-            final Bitmap bitmap = decodeSampledBitmap4Full(data);
-            return bitmap;
+            return decodeSampledBitmap4Full(data);
         }
 
         protected void onPostExecute(Bitmap bitmap){

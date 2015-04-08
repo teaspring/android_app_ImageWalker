@@ -1,5 +1,7 @@
 package com.bruyu.imagewalker;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 /**
@@ -36,5 +38,37 @@ public class Helper {
             inSampleSize *= 2;
         }
         return inSampleSize;
+    }
+
+    /*
+     * it must be static as it will be invoked in AsyncTask.doInBackground()
+     * */
+    static Bitmap decodeSampledBitmapFromFile(String filePath,
+                                                     int reqWidth, int reqHeight){
+        /// first avoid allocate memory to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+
+        options.inSampleSize = calcInSampleSizeDuo(options, reqWidth, reqHeight);
+
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(filePath, options);
+    }
+
+    /*
+    *
+    * */
+    static Bitmap decodeSampledBitmapFromResource(Resources resources, int resId,
+                                                         int reqWidth, int reqHeight){
+        /// first avoid allocate memory to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(resources, resId, options);
+
+        options.inSampleSize = calcInSampleSizeDuo(options, reqWidth, reqHeight);
+
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(resources, resId, options);
     }
 }

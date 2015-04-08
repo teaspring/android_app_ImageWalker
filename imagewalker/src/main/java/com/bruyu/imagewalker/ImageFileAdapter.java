@@ -20,7 +20,7 @@ public class ImageFileAdapter extends BaseAdapter {
 
     public ImageFileAdapter(Context cxt){
         mContext = cxt;
-        imgNameList = new ArrayList<String>();
+        imgNameList = new ArrayList<>();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ImageFileAdapter extends BaseAdapter {
             mGridActivity.loadBitmapFromFile(imgNameList.get(position),
                     imageView, mContext.getResources());
         }else {
-            Bitmap bm = BaseGridActivity.decodeSampledBitmapFromFile(imgNameList.get(position),
+            Bitmap bm = Helper.decodeSampledBitmapFromFile(imgNameList.get(position),
                     BaseGridActivity.ThumbnailWidth, BaseGridActivity.ThumbnailHeight);
             imageView.setImageBitmap(bm);
         }
