@@ -14,8 +14,7 @@ android {
     sourceSets{
         main{
             java{
-                exclude '**/unittest/MaxHeapUnitTest.java'
-                exclude '**/unittest/build.xml'
+                exclude '**/unittest/*'
             }
         }
         androidTest{

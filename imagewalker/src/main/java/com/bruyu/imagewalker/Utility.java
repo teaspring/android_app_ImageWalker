@@ -7,12 +7,6 @@ import java.lang.Float;
  * Created by bruyu on 3/17/15.
  */
 public class Utility {
-    public static void swapFloatInList(List<Float> list, int i, int j){
-        float tmp = list.get(i);
-        list.set(i, list.get(j));
-        list.set(j, tmp);
-    }
-
     public static void swapIntInList(List<Integer> list, int i, int j){
         int tmp = list.get(i);
         list.set(i, list.get(j));

@@ -55,10 +55,10 @@
   <!-- create the build, docs and dist directory -->
   <target name="init">
     <mkdir dir="${src.dir}"/>
-	<copy file="${init.dir}/MaxHeap.java" todir="${src.dir}"/>
+	<copy file="${init.dir}/SearchContainer.java" todir="${src.dir}"/>
 	<copy file="${init.dir}/Utility.java" todir="${src.dir}"/>
     <mkdir dir="${testcase.dir}"/>
-    <copy file="MaxHeapUnitTest.java" todir="${testcase.dir}"/>
+    <copy file="SearchContainerUnitTest.java" todir="${testcase.dir}"/>
 
     <mkdir dir="${target.classes.dir}"/>
     <mkdir dir="${test.classes.dir}"/>
