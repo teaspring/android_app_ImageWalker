@@ -35,7 +35,7 @@ public class GridActivity extends BaseGridActivity {
 
     private int topN = 20;
 
-    /// used for all decendent activity which want to use OpenCV lib
+    /// for all spawned activity which uses OpenCV lib
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {

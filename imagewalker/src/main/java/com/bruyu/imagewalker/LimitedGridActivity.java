@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.util.Log;
 import android.widget.ImageView;
@@ -70,6 +72,14 @@ public class LimitedGridActivity extends BaseGridActivity {
 
         GridView gridView = (GridView)findViewById(R.id.searchResult);
         gridView.setAdapter(mAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startImageDetailActivity(position);
+            }
+        });
+
     }
 
     @Override
@@ -119,6 +129,19 @@ public class LimitedGridActivity extends BaseGridActivity {
     }
 
     /*
+    * start activity which display full-screen images in sliding
+    * */
+    private void startImageDetailActivity(int position){
+        Intent intent = new Intent(getApplicationContext(), ImageDetailActivity.class);
+        intent.putExtra(ImageDetailActivity.IMG_POSITION, position);
+
+        ArrayList<String> sendImgNames = new ArrayList<>(mAdapter.getDataList());
+        intent.putStringArrayListExtra(ImageDetailActivity.IMG_FILELIST, sendImgNames);
+
+        startActivity(intent);
+    }
+
+    /*
     * internal counter of image compare
     * access to package
     * */
@@ -154,9 +177,9 @@ public class LimitedGridActivity extends BaseGridActivity {
 
         if(status == count){
             progressBar = 100;  // 100%
-            Toast.makeText(this, "Search in " + count + " images is done.",
+            Toast.makeText(this, "Searching " + count + " images done.",
                     Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "search in " + count + " images is done");
+            Log.d(TAG, "searching " + count + " images done");
             return;
         }
 
@@ -204,7 +227,7 @@ public class LimitedGridActivity extends BaseGridActivity {
         }
 
         builder.append(progressBar);
-        builder.append("% search is done.");
+        builder.append("% searching done");
 
         Toast.makeText(this, builder.toString(), Toast.LENGTH_SHORT).show();
     }
