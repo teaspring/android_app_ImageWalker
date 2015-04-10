@@ -214,12 +214,9 @@ public class LimitedGridActivity extends BaseGridActivity {
     * */
     @Override
     public void onBackPressed(){
-        ImageManager.cancelAll();
-
-        ImageManager.cleanHouse();
-
         super.onBackPressed();
 
-        super.onStop();
+        ImageManager.cancelAll();
+        ImageManager.cleanHouse();
     }
 }

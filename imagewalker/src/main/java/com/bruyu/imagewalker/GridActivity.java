@@ -68,10 +68,10 @@ public class GridActivity extends BaseGridActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(selectedItem != -1){
-                    if(selectedItem != position){
+                if(selectedItem != -1){ // action mode is working
+                    if(selectedItem != position){ // click another image, ignore the click
                         return;
-                    }else if(mActionMode != null){
+                    }else if(mActionMode != null){ // click same image, cancel action mode
                         mActionMode.finish();
                         mActionMode = null;
                         selectedItem = -1;

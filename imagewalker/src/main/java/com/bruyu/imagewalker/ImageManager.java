@@ -13,10 +13,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.lang.Runtime;
-import java.util.LinkedList;
 
 public class ImageManager{
-    //private static final String TAG = "::ImageManager";
     static final int TASK_FAILED = -1;
     static final int TASK_STARTED = 1;
     static final int TASK_COMPLETED = 2;
@@ -47,9 +45,6 @@ public class ImageManager{
 
     // A queue of working Runnable objects, handed to Thread Pool
     private final BlockingQueue<Runnable> mCompareWorkQueue;
-
-    // A queue of working ImageTask objects
-    private final LinkedList<ImageTask> mImageTaskWorkingList;
 
     // A queue of recycled free ImageTask objects
     private final Queue<ImageTask> mImageTaskReadyQueue;
@@ -107,11 +102,6 @@ public class ImageManager{
         mImageTaskReadyQueue = new LinkedBlockingQueue<ImageTask>();
 
         /*
-        * A linked list of working ImageTask objects
-        * */
-        mImageTaskWorkingList = new LinkedList<ImageTask>();
-
-        /*
          * Create a new pool of Thread objects for the compare work queue
          * */
          //final int AGREED_POOL_SIZE = Math.min(CORE_POOL_SIZE, NUMBER_OF_CORES);
@@ -159,15 +149,20 @@ public class ImageManager{
                             activity.increaseProgress();
 
                             if(mMaxHeap.heap_insert(key, img)){
-                                List<Integer> keys = new ArrayList<>();
-                                List<String> values = new ArrayList<>();
-                                mMaxHeap.getSortedKeysValues(keys, values);
+                                List<Integer> sortedKeys = new ArrayList<Integer>();
+                                List<String> sortedValues = new ArrayList<String>();
 
-                                activity.onAdapterDataChanges(keys, values);
+                                mMaxHeap.getSortedKeysValues(sortedKeys, sortedValues);
+                                activity.onAdapterDataChanges(sortedKeys, sortedValues);
+
+                                sortedKeys.clear();
+                                sortedValues.clear();
                             }
 
                             // show a toast if the search is done!
                             activity.proposeProgress();
+                        }else{
+                            recycleTask(imageTask);
                         }
                         break;
 
@@ -209,22 +204,27 @@ public class ImageManager{
      * Cancel all Threads in the CompareThreadPool
      * */
     public static void cancelAll(){
-        ImageTask[] taskArray = new ImageTask[sInstance.mImageTaskWorkingList.size()];
+        final int n = sInstance.mCompareWorkQueue.size();
+        ImageCompareRunnable[] runnableArray = new ImageCompareRunnable[n];
 
-        sInstance.mImageTaskWorkingList.toArray(taskArray);
-
+        int i = 0;
+        for(Runnable runnable : sInstance.mCompareWorkQueue){
+            runnableArray[i++] = (ImageCompareRunnable)runnable;
+        }
         /*
          * Locks on the singleton to ensure that other processes aren't mutating Threads.
          * then iterate over tasks array and interrupt the task's current Thread
          * */
         synchronized(sInstance){
-            for(ImageTask task : taskArray){
-                Thread thread = task.mThreadThis;
+            for(ImageCompareRunnable runnable : runnableArray){
+                Thread thread = runnable.mImageTask.getCurrentThread();
 
                 if(null != thread){
                     thread.interrupt();
                 }
             }
+
+           sInstance.mCompareWorkQueue.clear();
         }
     }
 
@@ -247,8 +247,6 @@ public class ImageManager{
         }
 
         compareTask.initializeCompareTask(ImageManager.sInstance, activity, testImage);
-
-        sInstance.mImageTaskWorkingList.add(compareTask);
 
         sInstance.mCompareThreadPool.execute(compareTask.getCompareRunnable());
 
@@ -278,13 +276,12 @@ public class ImageManager{
     }
 
     /*
-     * Recycles tasks by calling their internal recycle() method and then put them back into the task queue
+     * Recycles tasks by calling their internal recycle() method
+     * then put them back into the task queue
      * */
     void recycleTask(ImageTask compareTask){
         // Free up memory in the task
         compareTask.recycle();
-
-        mImageTaskWorkingList.removeFirstOccurrence(compareTask);
 
         // Put the task object back into the queue for re-use
         mImageTaskReadyQueue.offer(compareTask);

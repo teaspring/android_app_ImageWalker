@@ -16,7 +16,8 @@ class ImageCompareRunnable implements Runnable{
     static final int compMethod = ImageTask.getCompareMethod();
     static final float alpha    = ImageTask.getWeightAlpha();
 
-    private TaskRunnableCompareMethods mImageTask;
+    // package access
+    TaskRunnableCompareMethods mImageTask;
 
     interface TaskRunnableCompareMethods{
         /*
@@ -38,6 +39,11 @@ class ImageCompareRunnable implements Runnable{
         * Sets the thread for this compare image task
         * */
         void setCompareThread(Thread thread);
+
+        /*
+        * Get current thread allocating for work
+        * */
+        Thread getCurrentThread();
     }
 
     public ImageCompareRunnable(ImageTask task){
@@ -74,12 +80,16 @@ class ImageCompareRunnable implements Runnable{
             * */
             List<Mat> testHists = ImageTask.getMaskedHists(testImage);
 
+            if(Thread.interrupted()){
+                return;
+            }
+
             /*
             * Get segment masked histogram of base image
             * */
             List<Mat> baseHists = ImageTask.getBaseHists();
 
-            if(null == baseHists || baseHists.isEmpty()){
+            if(null == baseHists || baseHists.isEmpty() || Thread.interrupted()){
                 return;
             }
 

@@ -173,7 +173,7 @@ public class ImageTask implements TaskRunnableCompareMethods{
 
     /*
      * Compare the base image histogram and the test image histogram
-	 * */
+     * */
     static int compHistWeighted(List<Mat> histsBase, List<Mat> histsTest, int methodIdx,
                                 float alpha){
         if(histsBase.size() != histsTest.size()){
@@ -257,6 +257,19 @@ public class ImageTask implements TaskRunnableCompareMethods{
     }
 
     /*
+     * Returns the Thread that this Task is running on. The method must first get a lock on a
+     * static field, In this case the ThreadPool singleton. The lock is needed because the Thread
+     * object reference is stored in the Thread object itself, and that object can be changed
+     * by processes outside of this app.
+     * */
+    @Override
+    public Thread getCurrentThread(){
+        synchronized(sImageManager){
+            return mCurrentThread;
+        }
+    }
+
+    /*
      * Returns the masked histogram of base image
      * only accessible to this package
      * */
@@ -277,18 +290,6 @@ public class ImageTask implements TaskRunnableCompareMethods{
             return mActivityWeakRef.get();
         }
         return null;
-    }
-
-    /*
-     * Returns the Thread that this Task is running on. The method must first get a lock on a
-     * static field, In this case the ThreadPool singleton. The lock is needed because the Thread
-     * object reference is stored in the Thread object itself, and that object can be changed
-     * by processes outside of this app.
-     * */
-    public Thread getCurrentThread(){
-        synchronized(sImageManager){
-            return mCurrentThread;
-        }
     }
 
     /*
