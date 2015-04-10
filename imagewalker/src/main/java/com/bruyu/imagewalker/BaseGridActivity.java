@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -38,15 +37,16 @@ public class BaseGridActivity extends Activity{
         /// on MI1S, maxMemory is 64MB
         final int maxMemory = (int)(Runtime.getRuntime().maxMemory() / 1024);
         /*
-        * use 1/8 of available memory for this memory cache, normally it is 32/8 = 4MB
+        * use portion of available memory for this memory cache
         * a full screen GridView filled with images on device 800 * 400 resolutions
-        * would use around 1.5 MB (800*400* 4 bytes).so we can cache 2.5 pages in memory
+        * would use around 1.5 MB (800*400* 4 bytes).
         * */
         final int cacheSize = maxMemory / 4;
 
         /// use RetainFragment to hold LruCache<> across activity recreation
         RetainFragment retainFragment =
                 RetainFragment.findOrCreateRetainFragment(getFragmentManager());
+
         mMemoryCache = retainFragment.mRetainCache;
         if(mMemoryCache == null){
             mMemoryCache = new LruCache<String, Bitmap>(cacheSize){
@@ -62,8 +62,8 @@ public class BaseGridActivity extends Activity{
         mPlaceHolderBitmap = Helper.decodeSampledBitmapFromResource(
                 getResources(),
                 R.drawable.allblack,
-                BaseGridActivity.ThumbnailWidth,
-                BaseGridActivity.ThumbnailHeight);
+                ThumbnailWidth,
+                ThumbnailHeight);
 
         Log.i(TAG, "max memory is " + maxMemory);
     }
@@ -105,8 +105,6 @@ public class BaseGridActivity extends Activity{
     public static class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
         private String data;
-        private int reqWidth = BaseGridActivity.ThumbnailWidth;
-        private int reqHeight = BaseGridActivity.ThumbnailHeight;
 
         public BitmapWorkerTask(ImageView imageView){
             imageViewReference = new WeakReference<>(imageView);
@@ -115,7 +113,7 @@ public class BaseGridActivity extends Activity{
         /// decode image in background
         protected Bitmap doInBackground(String...params){
             data = params[0];  // image file path
-            return Helper.decodeSampledBitmapFromFile(data, reqWidth, reqHeight);
+            return Helper.decodeSampledBitmapFromFile(data, ThumbnailWidth, ThumbnailHeight);
         }
 
         /*

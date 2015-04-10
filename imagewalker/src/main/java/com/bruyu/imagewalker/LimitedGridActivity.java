@@ -23,11 +23,9 @@ public class LimitedGridActivity extends BaseGridActivity {
     public static final String TESTIMGLIST = "TESTIMGLIST";
     public static final String TOPN = "TOPN";
 
-    private final int DefaultN = 5;
-
     private String baseImage;
     private ArrayList<String> testImgNameList = new ArrayList<String>();
-    private int topN = DefaultN;
+    private int topN = 12;
     private DynamicImageFileAdapter mAdapter;
     private ImageView baseView;
 
@@ -64,8 +62,10 @@ public class LimitedGridActivity extends BaseGridActivity {
 
         baseView = (ImageView)findViewById(R.id.baseImage);
 
-        mAdapter = new DynamicImageFileAdapter(this, 0, testImgNameList.subList(0, 1));
-        Intent intent = setIntentForDynamicAdapter();
+        mAdapter = new DynamicImageFileAdapter(this, 0, new ArrayList<String>());
+
+        Intent intent = new Intent();
+        intent.putStringArrayListExtra(DynamicImageFileAdapter.RAWIMAGELIST, testImgNameList);
         mAdapter.setArguments(intent);
 
         GridView gridView = (GridView)findViewById(R.id.searchResult);
@@ -81,10 +81,12 @@ public class LimitedGridActivity extends BaseGridActivity {
 
         if(searchProgress.get() == 0) {
             Log.i(TAG, "base image is " + baseImage);
+
+            // update top N images of searching
+            ImageManager.updateTopN(topN);
+
+            // push image search task to thread pool
             for (String testImg : testImgNameList) {
-                if(baseImage.equals(testImg)){
-                    continue;
-                }
                 ImageManager.startCompare(this, baseImage, testImg);
             }
         }
@@ -108,12 +110,6 @@ public class LimitedGridActivity extends BaseGridActivity {
         return true;
     }
 
-    private Intent setIntentForDynamicAdapter(){
-        Intent intent = new Intent();
-        intent.putStringArrayListExtra(DynamicImageFileAdapter.RAWIMAGELIST, testImgNameList);
-        return intent;
-    }
-
     /*
     *
     * */
@@ -135,7 +131,7 @@ public class LimitedGridActivity extends BaseGridActivity {
     * */
     private void checkProgress(){
         int status = searchProgress.get();
-        int imgCount = testImgNameList.size() - 1; // remove base image from the repository
+        int imgCount = testImgNameList.size(); // remove base image from the repository
 
         if(status == imgCount){
             Toast.makeText(this, "search in all test images is done!",
@@ -154,7 +150,7 @@ public class LimitedGridActivity extends BaseGridActivity {
     * */
     void proposeProgress(){
         int status = searchProgress.get();
-        int count = testImgNameList.size() - 1;
+        int count = testImgNameList.size();
 
         if(status == count){
             progressBar = 100;  // 100%

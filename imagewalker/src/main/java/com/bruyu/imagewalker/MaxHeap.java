@@ -51,7 +51,7 @@ public class MaxHeap {
      * */
     public void heap_build(){
         int hsize = Keys.size();
-        for(int i = hsize >> 1; i >= 0; i--){
+        for(int i = (hsize >> 1); i >= 0; i--){
             max_heapify(i, hsize);
         }
         synchronized(obj) {
@@ -73,7 +73,6 @@ public class MaxHeap {
                 Keys.add(nkey);
                 Values.add(nval);
             }
-
         }else{
             if(!heapified){
                 heap_build();

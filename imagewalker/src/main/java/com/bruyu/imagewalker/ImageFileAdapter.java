@@ -53,16 +53,8 @@ public class ImageFileAdapter extends BaseAdapter {
             imageView = (ImageView)convertView;
         }
 
-        if(mContext instanceof BaseGridActivity){
-            BaseGridActivity mGridActivity = (BaseGridActivity)mContext;
-            mGridActivity.loadBitmapFromFile(imgNameList.get(position),
-                    imageView, mContext.getResources());
-        }else {
-            Bitmap bm = Helper.decodeSampledBitmapFromFile(imgNameList.get(position),
-                    BaseGridActivity.ThumbnailWidth, BaseGridActivity.ThumbnailHeight);
-            imageView.setImageBitmap(bm);
-        }
-
+        BaseGridActivity.loadBitmapFromFile(imgNameList.get(position),
+                imageView, mContext.getResources());
         return imageView;
     }
 

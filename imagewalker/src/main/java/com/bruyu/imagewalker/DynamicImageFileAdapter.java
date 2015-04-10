@@ -60,11 +60,7 @@ public class DynamicImageFileAdapter extends ArrayAdapter {
             imageView = (ImageView)convertView;
         }
 
-        if(mContext instanceof BaseGridActivity) {
-            BaseGridActivity mGridActivity = (BaseGridActivity) mContext;
-            mGridActivity.loadBitmapFromFile(getItem(position), imageView, mContext.getResources());
-        }
-
+        BaseGridActivity.loadBitmapFromFile(getItem(position), imageView, mContext.getResources());
         return imageView;
     }
 

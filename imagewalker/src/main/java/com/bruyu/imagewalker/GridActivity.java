@@ -15,13 +15,12 @@ import android.view.MenuItem;
 import android.view.MenuInflater;
 
 import java.io.File;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by bruyu on 3/19/15.
+ * main activity to display all images in grid
  */
 public class GridActivity extends BaseGridActivity {
     private static final String TAG = "::GridActivity";
@@ -34,7 +33,7 @@ public class GridActivity extends BaseGridActivity {
     private int selectedItem = -1;
     protected ActionMode mActionMode;  // for action mode
 
-    private int topN = 2;
+    private int topN = 20;
 
     /// used for all decendent activity which want to use OpenCV lib
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -123,6 +122,7 @@ public class GridActivity extends BaseGridActivity {
                 builder.append(mMemoryCache.missCount());
                 builder.append(", hit count is ");
                 builder.append(mMemoryCache.hitCount());
+
                 Log.d(TAG, builder.toString());
             default:
                 break;
@@ -167,7 +167,7 @@ public class GridActivity extends BaseGridActivity {
     };
 
     /*
-    *
+    * start activity which display full-screen images in sliding
     * */
     private void startImageDetailActivity(int position){
         Intent intent = new Intent(getApplicationContext(), ImageDetailActivity.class);
@@ -180,7 +180,7 @@ public class GridActivity extends BaseGridActivity {
     }
 
     /*
-    *
+    * start activity which display image searching
     * */
     private void startLimitedGridActivity(int position){
         Intent intent = new Intent(getApplicationContext(), LimitedGridActivity.class);
