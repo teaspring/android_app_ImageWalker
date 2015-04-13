@@ -69,7 +69,7 @@ public class GridActivity extends BaseGridActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(selectedItem != -1){ // action mode is working
-                    if(selectedItem != position){ // click another image, ignore the click
+                    if(selectedItem != position){ // click another image, ignore this click
                         return;
                     }else if(mActionMode != null){ // click same image, cancel action mode
                         mActionMode.finish();

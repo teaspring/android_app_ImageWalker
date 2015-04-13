@@ -2,6 +2,7 @@ package com.bruyu.imagewalker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,9 +17,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by bruyu on 3/19/15.
+ * display search result in GridView
  */
-public class LimitedGridActivity extends BaseGridActivity {
+public class LimitedGridActivity extends BaseGridActivity
+        implements GridView.MultiChoiceModeListener{
     private static final String TAG = "::LimitedActivity";
 
     public static final String BASEIMAGE = "BASEIMAGE";
@@ -26,9 +28,16 @@ public class LimitedGridActivity extends BaseGridActivity {
     public static final String TOPN = "TOPN";
 
     private String baseImage;
-    private ArrayList<String> testImgNameList = new ArrayList<String>();
+    private ArrayList<String> testImgNameList = new ArrayList<>();
     private int topN = 12;
+
+    private GridView mGrid;
+
+    // flag indicates whether action mode is started
+    private boolean inActionMode = false;
+
     private DynamicImageFileAdapter mAdapter;
+
     private ImageView baseView;
 
     private AtomicInteger searchProgress;
@@ -47,7 +56,53 @@ public class LimitedGridActivity extends BaseGridActivity {
 
         progressBar = 0;
 
-        Bundle extras = getIntent().getExtras();
+        // set baseImage, testImgList, and topN
+        getArgsFromBundle(getIntent().getExtras());
+
+        baseView = (ImageView)findViewById(R.id.baseImage);
+
+        mAdapter = new DynamicImageFileAdapter(this, 0, new ArrayList<String>());
+
+        Intent intent = new Intent();
+        intent.putStringArrayListExtra(DynamicImageFileAdapter.RAWIMAGELIST, testImgNameList);
+        mAdapter.setArguments(intent);
+
+        mGrid = (GridView)findViewById(R.id.searchResult);
+        mGrid.setAdapter(mAdapter);
+
+        mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(inActionMode){
+                    return;
+                }
+                startImageDetailActivity(position);
+            }
+        });
+
+        mGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id){
+                Log.d(TAG, "bind onItemLongClick()");
+
+                if(searchProgress.get() < testImgNameList.size()){
+                    inActionMode = false;
+                    return false;
+                }
+
+                mGrid.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+                mGrid.setMultiChoiceModeListener(LimitedGridActivity.this);
+
+                return true;
+           }
+        });
+    }
+
+    /*
+    * attempt to get arguments from Bundle
+    * */
+    private void getArgsFromBundle(Bundle extras){
         if(extras != null){
             if(extras.containsKey(TESTIMGLIST)){
                 testImgNameList.addAll(extras.getStringArrayList(TESTIMGLIST));
@@ -61,25 +116,6 @@ public class LimitedGridActivity extends BaseGridActivity {
                 topN = extras.getInt(TOPN);
             }
         }
-
-        baseView = (ImageView)findViewById(R.id.baseImage);
-
-        mAdapter = new DynamicImageFileAdapter(this, 0, new ArrayList<String>());
-
-        Intent intent = new Intent();
-        intent.putStringArrayListExtra(DynamicImageFileAdapter.RAWIMAGELIST, testImgNameList);
-        mAdapter.setArguments(intent);
-
-        GridView gridView = (GridView)findViewById(R.id.searchResult);
-        gridView.setAdapter(mAdapter);
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startImageDetailActivity(position);
-            }
-        });
-
     }
 
     @Override
@@ -121,7 +157,7 @@ public class LimitedGridActivity extends BaseGridActivity {
     }
 
     /*
-    *
+    * GridView to display search result can be updated
     * */
     public void onAdapterDataChanges(List<Integer> keys, List<String> data){
         Log.d(TAG, ":AdapterDataChanges(): " + keys.toString() + ", " + data.toString());
@@ -150,17 +186,20 @@ public class LimitedGridActivity extends BaseGridActivity {
     }
 
     /*
-    *
+    * check searching progress invoked by menu item
     * */
     private void checkProgress(){
         int status = searchProgress.get();
         int imgCount = testImgNameList.size(); // remove base image from the repository
 
         if(status == imgCount){
-            Toast.makeText(this, "search in all test images is done!",
-                    Toast.LENGTH_SHORT).show();
+            StringBuilder builder = new StringBuilder("search in all ");
+            builder.append(imgCount);
+            builder.append(" images is done");
+
+            Toast.makeText(this, builder.toString(),Toast.LENGTH_SHORT).show();
         }else if(status < imgCount){
-            StringBuilder builder = new StringBuilder("currently compared ");
+            StringBuilder builder = new StringBuilder("already compared ");
             builder.append(status);
             builder.append(" images");
 
@@ -169,7 +208,7 @@ public class LimitedGridActivity extends BaseGridActivity {
     }
 
     /*
-    * show a toast to indicate the search is done!
+    * show a toast to indicate the searching progress percentage
     * */
     void proposeProgress(){
         int status = searchProgress.get();
@@ -234,6 +273,7 @@ public class LimitedGridActivity extends BaseGridActivity {
 
     /*
     * when Back button is pressed, this activity can be stopped
+    * interrupt all working threads, and cancel all waiting searching tasks
     * */
     @Override
     public void onBackPressed(){
@@ -241,5 +281,42 @@ public class LimitedGridActivity extends BaseGridActivity {
 
         ImageManager.cancelAll();
         ImageManager.cleanHouse();
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu){
+        Log.d(TAG, "try create action mode while inActionMode is " + Boolean.toString(inActionMode));
+
+        inActionMode = true;
+        mode.setTitle("select items");
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu){
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item){
+        /* delete or send action will be invoked from here */
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode){
+        Log.d(TAG, "call onDestroyActionMode() ");
+        mode.finish();
+
+        inActionMode = false;
+        mGrid.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
+    }
+
+    @Override
+    public void onItemCheckedStateChanged(ActionMode mode, int position,
+                                          long id, boolean checked){
+        int count = mGrid.getCheckedItemCount();
+        mode.setTitle(count + " items selected");
+        mode.setSubtitle(count + " items selected");
     }
 }
