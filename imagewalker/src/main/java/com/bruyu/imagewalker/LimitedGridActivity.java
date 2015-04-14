@@ -84,15 +84,18 @@ public class LimitedGridActivity extends BaseGridActivity
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id){
-                Log.d(TAG, "bind onItemLongClick()");
-
                 if(searchProgress.get() < testImgNameList.size()){
                     inActionMode = false;
                     return false;
                 }
 
                 mGrid.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+
+                // set listener for multi-choice mode at action mode
                 mGrid.setMultiChoiceModeListener(LimitedGridActivity.this);
+
+                // necessary to start action mode by setting item checked immediately
+                mGrid.setItemChecked(position, true);
 
                 return true;
            }
@@ -219,6 +222,7 @@ public class LimitedGridActivity extends BaseGridActivity
             Toast.makeText(this, "Searching " + count + " images done.",
                     Toast.LENGTH_SHORT).show();
             Log.d(TAG, "searching " + count + " images done");
+
             return;
         }
 
@@ -283,10 +287,9 @@ public class LimitedGridActivity extends BaseGridActivity
         ImageManager.cleanHouse();
     }
 
+    /* ActionMode.setCustomView() to customize view of action mode */
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu){
-        Log.d(TAG, "try create action mode while inActionMode is " + Boolean.toString(inActionMode));
-
         inActionMode = true;
         mode.setTitle("select items");
         return true;
@@ -305,7 +308,6 @@ public class LimitedGridActivity extends BaseGridActivity
 
     @Override
     public void onDestroyActionMode(ActionMode mode){
-        Log.d(TAG, "call onDestroyActionMode() ");
         mode.finish();
 
         inActionMode = false;
