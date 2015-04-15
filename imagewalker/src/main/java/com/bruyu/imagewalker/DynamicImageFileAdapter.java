@@ -2,16 +2,18 @@ package com.bruyu.imagewalker;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Checkable;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
 
 /**
  * BaseAdapter to process image file dynamically in grid view
@@ -47,21 +49,30 @@ public class DynamicImageFileAdapter extends ArrayAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent ) {
+        CheckableLayout chLayout;
         ImageView imageView;
+
         if(convertView == null){ // if it is not recycled
-            imageView = new ImageView(mContext);
-            GridView.LayoutParams mParams = new GridView.LayoutParams(
+            GridView.LayoutParams thumbParams = new GridView.LayoutParams(
                     BaseGridActivity.ThumbnailWidth,
                     BaseGridActivity.ThumbnailHeight);
-            imageView.setLayoutParams(mParams);
 
+            imageView = new ImageView(mContext);
+            imageView.setLayoutParams(thumbParams);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            chLayout = new CheckableLayout(mContext);
+            chLayout.setLayoutParams(thumbParams);
+
+            chLayout.addView(imageView);
         }else{
-            imageView = (ImageView)convertView;
+            chLayout = (CheckableLayout)convertView;
+            imageView = (ImageView)chLayout.getChildAt(0);
         }
 
         BaseGridActivity.loadBitmapFromFile(getItem(position), imageView, mContext.getResources());
-        return imageView;
+
+        return chLayout;
     }
 
     public void setArguments(Intent intent){
@@ -86,5 +97,32 @@ public class DynamicImageFileAdapter extends ArrayAdapter {
 
     synchronized List<String> getDataList(){
         return selectImageList;
+    }
+
+    class CheckableLayout extends FrameLayout implements Checkable{
+        private boolean mChecked;
+
+        public CheckableLayout(Context context){
+            super(context);
+        }
+
+        @Override
+        public void setChecked(boolean checked){
+            mChecked = checked;
+            Drawable drawable
+                    = getResources().getDrawable(R.drawable.allblack);
+            drawable.setAlpha(100);
+            this.setForeground(checked ? drawable : null);
+        }
+
+        @Override
+        public boolean isChecked(){
+            return mChecked;
+        }
+
+        @Override
+        public void toggle(){
+            mChecked = !mChecked;
+        }
     }
 }
