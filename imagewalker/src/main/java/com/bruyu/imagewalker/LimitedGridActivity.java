@@ -1,17 +1,23 @@
 package com.bruyu.imagewalker;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.app.AlertDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,7 +40,9 @@ public class LimitedGridActivity extends BaseGridActivity
     private GridView mGrid;
 
     // flag indicates whether action mode is started
-    private boolean inActionMode = false;
+    private ActionMode mActionMode = null;
+
+    private DeleteDialog mDeleteDialog;
 
     private DynamicImageFileAdapter mAdapter;
 
@@ -73,7 +81,7 @@ public class LimitedGridActivity extends BaseGridActivity
         mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(inActionMode){
+                if(null != mActionMode){
                     return;
                 }
                 startImageDetailActivity(position);
@@ -85,7 +93,6 @@ public class LimitedGridActivity extends BaseGridActivity
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id){
                 if(searchProgress.get() < testImgNameList.size()){
-                    inActionMode = false;
                     return false;
                 }
 
@@ -100,6 +107,9 @@ public class LimitedGridActivity extends BaseGridActivity
                 return true;
            }
         });
+
+        mDeleteDialog = new DeleteDialog(this);
+        mDeleteDialog.setProperties();
     }
 
     /*
@@ -173,16 +183,14 @@ public class LimitedGridActivity extends BaseGridActivity
     private void startImageDetailActivity(int position){
         Intent intent = new Intent(getApplicationContext(), ImageDetailActivity.class);
         intent.putExtra(ImageDetailActivity.IMG_POSITION, position);
-
-        ArrayList<String> sendImgNames = new ArrayList<>(mAdapter.getDataList());
-        intent.putStringArrayListExtra(ImageDetailActivity.IMG_FILELIST, sendImgNames);
+        intent.putStringArrayListExtra(ImageDetailActivity.IMG_FILELIST,
+                mAdapter.getDataListNative());
 
         startActivity(intent);
     }
 
     /*
-    * internal counter of image compare
-    * access to package
+    * access to package, internal counter of image compare
     * */
     int increaseProgress(){
         return searchProgress.incrementAndGet();
@@ -290,8 +298,10 @@ public class LimitedGridActivity extends BaseGridActivity
     /* ActionMode.setCustomView() to customize view of action mode */
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu){
-        inActionMode = true;
-        mode.setTitle("select items");
+        mActionMode = mode;
+
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.multichoice, menu);
         return true;
     }
 
@@ -302,7 +312,16 @@ public class LimitedGridActivity extends BaseGridActivity
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item){
-        /* delete or send action will be invoked from here */
+        switch (item.getItemId()){
+            case R.id.delete_multi:
+                mDeleteDialog.show();
+                break;
+            case R.id.send_multi:
+                operateSendItems();
+                break;
+            default:
+                break;
+        }
         return true;
     }
 
@@ -310,15 +329,89 @@ public class LimitedGridActivity extends BaseGridActivity
     public void onDestroyActionMode(ActionMode mode){
         mode.finish();
 
-        inActionMode = false;
+        mActionMode = null;
         mGrid.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
     }
 
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position,
                                           long id, boolean checked){
-        int count = mGrid.getCheckedItemCount();
-        mode.setTitle(count + " items selected");
-        mode.setSubtitle(count + " items selected");
+        // checked position is stored in GridView.getCheckedPositions()
     }
+
+    /*
+    * send multi selected items in MultiChoice action mode
+    * */
+    void operateSendItems(){
+    }
+
+    /*
+    * delete multi selected items in MultiChoice action mode
+    * */
+    void operateDeleteItems(){
+        ArrayList<String> multiSelectedItems =
+                parseCheckedPositions(mGrid.getCheckedItemPositions());
+
+        boolean containsBase = multiSelectedItems.contains(baseImage);
+
+        ArrayList<String> doneImgs = new ArrayList<>(mAdapter.getDataListNative());
+
+        for(String fullPath : multiSelectedItems){
+            File file = new File(fullPath);
+
+            if(file.delete()){
+                Log.d(TAG, "delete successfully");
+                doneImgs.remove(fullPath);
+            }
+        }
+        mAdapter.updateDataList(doneImgs);
+
+        Toast.makeText(this, "delete is done", Toast.LENGTH_SHORT).show();
+        mActionMode.finish();
+
+        if(containsBase){ // if contains base image, return to parent activity
+            this.finish();
+        }
+    }
+
+    /*
+    * parse multi-selected positions from GridView.getCheckedPositions()
+    * SparseBooleanArray: key is what you need(position), value is true or false
+    * */
+    private ArrayList<String> parseCheckedPositions(SparseBooleanArray array){
+        ArrayList<String> multiSelected = new ArrayList<>();
+        final int n = array.size();
+        for(int index = 0; index < n; index++){
+            if(array.valueAt(index)){
+                multiSelected.add(mAdapter.getItem(array.keyAt(index)));
+            }
+        }
+        return multiSelected;
+    }
+
+    class DeleteDialog extends AlertDialog{
+        public DeleteDialog(Context context){
+            super(context);
+        }
+
+        public void setProperties(){
+            setMessage("Really delete selected images ?");
+
+            setButton(BUTTON_NEGATIVE, "No", new OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which){
+                    cancel();
+                }
+            });
+
+            setButton(BUTTON_POSITIVE, "Yes", new OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which){
+                    operateDeleteItems();
+                    cancel();
+                }
+            });
+        }
+
+    };
 }

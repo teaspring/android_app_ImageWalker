@@ -30,6 +30,9 @@ public class ImageFileAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position){
+        if(position >=0 && position < imgNameList.size()){
+            return imgNameList.get(position);
+        }
         return null;
     }
 
@@ -58,8 +61,9 @@ public class ImageFileAdapter extends BaseAdapter {
         return imageView;
     }
 
-    public void setImageList(List<String> images){
+    public void updateDataList(List<String> images){
         imgNameList.clear();
         imgNameList.addAll(images);
+        this.notifyDataSetChanged();
     }
 }

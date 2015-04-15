@@ -43,6 +43,7 @@ public class ImageDetailActivity extends FragmentActivity {
         Bundle extras = getIntent().getExtras();
         itemPosition = (extras != null && extras.containsKey(IMG_POSITION)?
                 extras.getInt(IMG_POSITION) : 0);
+
         imgNameList = new ArrayList<>();
         if(extras != null && extras.containsKey(IMG_FILELIST)){
             imgNameList.addAll(extras.getStringArrayList(IMG_FILELIST));

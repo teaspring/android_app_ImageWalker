@@ -95,7 +95,7 @@ public class DynamicImageFileAdapter extends ArrayAdapter {
         this.notifyDataSetChanged();
     }
 
-    synchronized List<String> getDataList(){
+    synchronized ArrayList<String> getDataListNative(){
         return selectImageList;
     }
 

@@ -28,7 +28,7 @@ public class GridActivity extends BaseGridActivity {
     public static final Pattern imgPattern = Pattern.compile("\\.jpg$");
 
     private ImageFileAdapter mAdapter;
-    private ArrayList<String> imgNameList;
+    private ArrayList<String> imgNameList = new ArrayList<>();
 
     private int selectedItem = -1;
     protected ActionMode mActionMode;  // for action mode
@@ -55,14 +55,10 @@ public class GridActivity extends BaseGridActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        imgNameList = new ArrayList<>();
-
-        readImageNames(imgPath);
-        mAdapter = new ImageFileAdapter(this);
-        mAdapter.setImageList(imgNameList);
-
         setContentView(R.layout.activity_grid);
         GridView gridView = (GridView)findViewById(R.id.gridview);
+
+        mAdapter = new ImageFileAdapter(this);
         gridView.setAdapter(mAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -103,6 +99,9 @@ public class GridActivity extends BaseGridActivity {
     public void onResume(){
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_10, this, mLoaderCallback);
+
+        readImageNames(imgPath);
+        mAdapter.updateDataList(imgNameList);
     }
 
     @Override

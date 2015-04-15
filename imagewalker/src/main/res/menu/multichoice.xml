@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/delete_multi"
+        android:title="@string/delete_multi"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/send_multi"
+        android:title="@string/send_multi"
+        app:showAsAction="always"/>
+</menu>
