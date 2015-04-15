@@ -360,7 +360,7 @@ public class LimitedGridActivity extends BaseGridActivity
             File file = new File(fullPath);
 
             if(file.delete()){
-                Log.d(TAG, "delete successfully");
+                Log.d(TAG, "delete successfully: " + fullPath);
                 doneImgs.remove(fullPath);
             }
         }
