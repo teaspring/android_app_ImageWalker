@@ -27,10 +27,13 @@ public class GridActivity extends BaseGridActivity {
     public static final String imgPath = "/storage/sdcard0/DCIM/Camera";
     public static final Pattern imgPattern = Pattern.compile("\\.jpg$");
 
+    private GridView mGridView;
+
     private ImageFileAdapter mAdapter;
+
     private ArrayList<String> imgNameList = new ArrayList<>();
 
-    private int selectedItem = -1;
+    private int selectedPosition = -1;
     protected ActionMode mActionMode;  // for action mode
 
     private int topN = 20;
@@ -56,37 +59,43 @@ public class GridActivity extends BaseGridActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_grid);
-        GridView gridView = (GridView)findViewById(R.id.gridview);
+        mGridView = (GridView)findViewById(R.id.gridview);
 
         mAdapter = new ImageFileAdapter(this);
-        gridView.setAdapter(mAdapter);
+        mGridView.setAdapter(mAdapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(selectedItem != -1){ // action mode is working
-                    if(selectedItem != position){ // click another image, ignore this click
+                if(null != mActionMode){ // action mode is working
+                    if(selectedPosition != position){ // click another image, ignore this click
                         return;
                     }else if(mActionMode != null){ // click same image, cancel action mode
                         mActionMode.finish();
                         mActionMode = null;
-                        selectedItem = -1;
+                        selectedPosition = -1;
                     }
                 }
                 startImageDetailActivity(position);
             }
         });
 
-        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent,
                     View view, int position, long id) {
                 if(mActionMode != null){
                     return false;
                 }
-                selectedItem = position;
+
+                mGridView.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
+
                 mActionMode = GridActivity.this.startActionMode(mACB);
-                view.setSelected(true);
+
+                // set the checkable to checked
+                mGridView.setItemChecked(position, true);
+
+                selectedPosition = position;
                 return false;
             }
         });
@@ -149,7 +158,7 @@ public class GridActivity extends BaseGridActivity {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item){
             switch (item.getItemId()){
                 case R.id.search:
-                    startLimitedGridActivity(selectedItem);
+                    startLimitedGridActivity(selectedPosition);
                     mode.finish();
                     break;
                 default:
@@ -161,7 +170,11 @@ public class GridActivity extends BaseGridActivity {
         @Override
         public void onDestroyActionMode(ActionMode mode){
             mActionMode = null;
-            selectedItem = -1;
+
+            // reset the checkable to unchecked
+            mGridView.setItemChecked(selectedPosition, false);
+
+            selectedPosition = -1;
         }
     };
 

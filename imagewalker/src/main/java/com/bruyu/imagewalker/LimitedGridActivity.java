@@ -36,7 +36,7 @@ public class LimitedGridActivity extends BaseGridActivity
 
     private String baseImage;
     private ArrayList<String> testImgNameList = new ArrayList<>();
-    private int topN = 12;
+    private int topN = 20;
 
     private GridView mGrid;
 

@@ -29,7 +29,7 @@ public class ImageFileAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position){
+    public String getItem(int position){
         if(position >=0 && position < imgNameList.size()){
             return imgNameList.get(position);
         }
@@ -43,24 +43,35 @@ public class ImageFileAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent ){
+        CheckableLayout chLayout;
         ImageView imageView;
-        if(convertView == null){ // if it is not recycled
-            imageView = new ImageView(mContext);
-            GridView.LayoutParams mParams = new GridView.LayoutParams(
-                    BaseGridActivity.ThumbnailWidth, BaseGridActivity.ThumbnailHeight);
-            imageView.setLayoutParams(mParams);
 
-            // scale image uniformly, crop it to fill the fixed width/height
+        if(convertView == null){ // if it is not recycled
+            GridView.LayoutParams thumbParams = new GridView.LayoutParams(
+                    BaseGridActivity.ThumbnailWidth, BaseGridActivity.ThumbnailHeight);
+
+            imageView = new ImageView(mContext);
+            imageView.setLayoutParams(thumbParams);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            chLayout = new CheckableLayout(mContext);
+            chLayout.setLayoutParams(thumbParams);
+
+            // add ImageView to FrameLayout
+            chLayout.addView(imageView);
         }else{
-            imageView = (ImageView)convertView;
+            chLayout = (CheckableLayout)convertView;
+            imageView = (ImageView)chLayout.getChildAt(0);
         }
 
-        BaseGridActivity.loadBitmapFromFile(imgNameList.get(position),
-                imageView, mContext.getResources());
-        return imageView;
+        BaseGridActivity.loadBitmapFromFile(getItem(position),imageView, mContext.getResources());
+
+        return chLayout;
     }
 
+    /*
+    * update inner data of adapter
+    * */
     public void updateDataList(List<String> images){
         imgNameList.clear();
         imgNameList.addAll(images);
