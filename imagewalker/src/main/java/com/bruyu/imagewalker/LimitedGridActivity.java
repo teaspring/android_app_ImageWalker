@@ -3,6 +3,7 @@ package com.bruyu.imagewalker;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -352,6 +353,22 @@ public class LimitedGridActivity extends BaseGridActivity
     * send multi selected items in MultiChoice action mode
     * */
     void operateSendItems(){
+        ArrayList<Uri> itemUris = new ArrayList<>();
+        ArrayList<String> multiSelectedItems =
+                parseCheckedPositions(mGrid.getCheckedItemPositions());
+        for(String fullPath : multiSelectedItems){
+            itemUris.add(Uri.fromFile(new File(fullPath)));
+        }
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, itemUris);
+        shareIntent.setType("image/jpeg");
+
+        startActivity(Intent.createChooser(shareIntent,
+                getResources().getString(R.string.send_to)));
+
+        mActionMode.finish();
     }
 
     /*
@@ -398,6 +415,9 @@ public class LimitedGridActivity extends BaseGridActivity
         return multiSelected;
     }
 
+    /*
+    * alert dialog pop when Delete menu item is pressed
+    * */
     class DeleteDialog extends AlertDialog{
         public DeleteDialog(Context context){
             super(context);
