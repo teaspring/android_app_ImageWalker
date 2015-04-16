@@ -14,18 +14,15 @@ import android.widget.ImageView;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by bruyu on 3/12/15.
+ *
  */
 public class ImageDetailFragment extends Fragment{
     public static final String TAG = "ImageDetailFragment";
 
     public static final String IMG_FILENAME = "FILENAME";
 
-    // official MI1S resolution is around 480 * 800
-    public static final int FullWidth = 480;
-    public static final int FullHeight = 800;
-
     private String fileName;
+
     private ImageView mImageView;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,17 +46,6 @@ public class ImageDetailFragment extends Fragment{
         }
     }
 
-    public static Bitmap decodeSampledBitmap4Full(String filePath){
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
-
-        options.inSampleSize = Helper.calcInSampleSizeSingle(options, FullWidth, FullWidth);
-
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(filePath, options);
-    }
-
     /*
     * subclass of AsyncTask to execute full screen image decode
     * */
@@ -73,7 +59,7 @@ public class ImageDetailFragment extends Fragment{
 
         protected Bitmap doInBackground(String...params){
             data = params[0];
-            return decodeSampledBitmap4Full(data);
+            return Helper.decodeSampledBitmap4Full(data);
         }
 
         protected void onPostExecute(Bitmap bitmap){

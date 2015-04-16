@@ -81,9 +81,17 @@ public class LimitedGridActivity extends BaseGridActivity
         mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // if action mode of multi-choice selection is on, avoid full screen
                 if(null != mActionMode){
                     return;
                 }
+
+                // if search is not completed, avoid full screen
+                if(searchProgress.get() < testImgNameList.size() - 1){
+                    return;
+                }
+
+                // open image in full screen
                 startImageDetailActivity(position);
             }
         });
@@ -92,6 +100,7 @@ public class LimitedGridActivity extends BaseGridActivity
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id){
+                // if search is not completed, avoid multi-choice action mode is on
                 if(searchProgress.get() < testImgNameList.size()){
                     return false;
                 }
@@ -101,7 +110,7 @@ public class LimitedGridActivity extends BaseGridActivity
                 // set listener for multi-choice mode at action mode
                 mGrid.setMultiChoiceModeListener(LimitedGridActivity.this);
 
-                // necessary to start action mode by setting item checked immediately
+                // necessary to start action mode by setting item checked manually
                 mGrid.setItemChecked(position, true);
 
                 return true;

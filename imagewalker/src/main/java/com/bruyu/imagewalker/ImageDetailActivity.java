@@ -1,5 +1,6 @@
 package com.bruyu.imagewalker;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,14 +10,9 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.Toast;
-import android.os.AsyncTask;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import java.util.ArrayList;
-import java.lang.ref.WeakReference;
 
 /**
  * Created on 3/11/15.
@@ -58,8 +54,18 @@ public class ImageDetailActivity extends FragmentActivity {
     }
 
     @Override
-    public void onBackPressed(){
-        super.onBackPressed();  // for UX, user press Back wants to return thumbnail
+    public void onResume(){
+        super.onResume();
+
+        // update orientation status
+        boolean currLandscape = (getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE);
+        if(Helper.isLandscape() != currLandscape){
+            Helper.toggleLandscape(currLandscape);
+        }
+
+        // not elegant strategy to ask data adapter to reopen image
+        mPagerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -79,8 +85,10 @@ public class ImageDetailActivity extends FragmentActivity {
         }
     }
 
+    /*
+    * data adapter for a ViewPager layout which can scroll items like slides
+    * */
     class ImageDetailPagerAdapter extends FragmentStatePagerAdapter{
-
         public ImageDetailPagerAdapter(FragmentManager fm){
             super(fm);
         }
@@ -93,6 +101,7 @@ public class ImageDetailActivity extends FragmentActivity {
             bundle.putString(ImageDetailFragment.IMG_FILENAME,
                         imgNameList.get(position));
             fragment.setArguments(bundle);
+
             return fragment;
         }
 

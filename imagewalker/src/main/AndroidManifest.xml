@@ -19,7 +19,8 @@
         </activity>
         <activity
             android:name=".ImageDetailActivity"
-            android:label="details">
+            android:label="details"
+            android:screenOrientation="sensor">
         </activity>
         <activity
             android:name=".LimitedGridActivity"
