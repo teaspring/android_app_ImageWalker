@@ -4,12 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/delete_multi"
-        android:title="@string/delete_multi"
+        android:id="@+id/remove_multi"
+        android:title="@string/remove_multi"
+        android:icon="@drawable/ic_action_remove"
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/send_multi"
-        android:title="@string/send_multi"
+        android:id="@+id/share_multi"
+        android:title="@string/share_multi"
+        android:icon="@drawable/ic_action_share"
         app:showAsAction="always"/>
 </menu>

@@ -323,10 +323,10 @@ public class LimitedGridActivity extends BaseGridActivity
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item){
         switch (item.getItemId()){
-            case R.id.delete_multi:
+            case R.id.remove_multi:
                 mDeleteDialog.show();
                 break;
-            case R.id.send_multi:
+            case R.id.share_multi:
                 operateSendItems();
                 break;
             default:
