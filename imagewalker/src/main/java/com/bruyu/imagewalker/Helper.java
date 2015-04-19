@@ -52,6 +52,7 @@ public class Helper {
     }
 
     /*
+    * BitmapFactory.Options.inSampleSize must be power of 2. if not, rounded to the nearest
     * for portrait orientation, scale down image based on width only
     * for landscape orientation, scale down image based on height only
     * */

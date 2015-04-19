@@ -130,14 +130,14 @@ public class ImageManager{
                 // gets the ImageTask from the incoming Message object
                 ImageTask imageTask = (ImageTask)inputMessage.obj;
 
+                // sets the LimitedGridActivity contained in ImageTask as a weak reference
+                LimitedGridActivity activity = imageTask.getLimitedGridActivity();
+
                 switch (inputMessage.what){
                     case TASK_STARTED:
                         break;
 
                     case TASK_COMPLETED:
-                        // sets the LimitedGridActivity contained in ImageTask as a weak reference
-                        LimitedGridActivity activity = imageTask.getLimitedGridActivity();
-
                         if(null != activity){
                             int key = imageTask.getCompareValue();
                             String img = imageTask.getTestImageName();
@@ -158,7 +158,6 @@ public class ImageManager{
                                 sortedKeys.clear();
                                 sortedValues.clear();
                             }
-
                             // show a toast if the search is done!
                             activity.proposeProgress();
                         }else{
@@ -167,6 +166,9 @@ public class ImageManager{
                         break;
 
                     case TASK_FAILED:
+                        if(null != activity) {
+                            activity.increaseProgress();
+                        }
                         recycleTask(imageTask);
                         break;
                     default:
@@ -235,8 +237,9 @@ public class ImageManager{
             String baseImage, String testImage){
 
         if(null == mBaseImage && null != baseImage){
-            mBaseImage = baseImage;
-            mBaseHists = ImageTask.getMaskedHists(mBaseImage);
+            synchronized(sInstance) {
+                mBaseImage = baseImage;
+            }
         }
 
         ImageTask compareTask = sInstance.mImageTaskReadyQueue.poll();
@@ -292,6 +295,18 @@ public class ImageManager{
     * */
     static List<Mat> getBaseHists(){
         return mBaseHists;
+    }
+
+    /*
+    * calculate masked histogram of base image
+    * */
+    static List<Mat> setBaseHists(){
+        synchronized (sInstance){
+            if(null == mBaseHists){
+                mBaseHists = ImageTask.getMaskedHists(mBaseImage);
+            }
+            return mBaseHists;
+        }
     }
 
     /*

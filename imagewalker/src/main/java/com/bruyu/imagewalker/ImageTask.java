@@ -269,14 +269,6 @@ public class ImageTask implements TaskRunnableCompareMethods{
         }
     }
 
-    /*
-     * Returns the masked histogram of base image
-     * only accessible to this package
-     * */
-    static List<Mat> getBaseHists(){
-        return ImageManager.getBaseHists();
-    }
-
     // return the instance which compare the image
     Runnable getCompareRunnable(){
         return mCompareRunnable;

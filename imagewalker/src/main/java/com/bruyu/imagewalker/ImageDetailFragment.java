@@ -72,14 +72,6 @@ public class ImageDetailFragment extends Fragment{
             }
 
             if(imageViewReference != null && bitmap != null){
-                StringBuilder builder = new StringBuilder("decoded full screen bitmap width ");
-                builder.append(bitmap.getWidth());
-                builder.append(", height ");
-                builder.append(bitmap.getHeight());
-                builder.append(", KBytes: ");
-                builder.append(bitmap.getByteCount() / 1024);
-                Log.i(TAG, builder.toString());
-
                 final ImageView imageView = imageViewReference.get();
                 if(imageView != null){
                     imageView.setImageBitmap(bitmap);

@@ -87,10 +87,10 @@ class ImageCompareRunnable implements Runnable{
             /*
             * Get segment masked histogram of base image
             * */
-            List<Mat> baseHists = ImageTask.getBaseHists();
+            List<Mat> baseHists = ImageManager.getBaseHists();
 
-            if(null == baseHists || baseHists.isEmpty() || Thread.interrupted()){
-                return;
+            if(null == baseHists || baseHists.isEmpty()){
+                baseHists = ImageManager.setBaseHists();
             }
 
             /*

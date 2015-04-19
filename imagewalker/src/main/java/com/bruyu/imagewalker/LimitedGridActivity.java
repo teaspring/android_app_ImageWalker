@@ -70,7 +70,9 @@ public class LimitedGridActivity extends BaseGridActivity
 
         baseView = (ImageView)findViewById(R.id.baseImage);
 
-        mAdapter = new DynamicImageFileAdapter(this, 0, new ArrayList<String>());
+        ArrayList<String> imgs = new ArrayList<>();
+        imgs.add(testImgNameList.get(0));
+        mAdapter = new DynamicImageFileAdapter(this, 0, imgs);
 
         Intent intent = new Intent();
         intent.putStringArrayListExtra(DynamicImageFileAdapter.RAWIMAGELIST, testImgNameList);
@@ -119,7 +121,6 @@ public class LimitedGridActivity extends BaseGridActivity
         });
 
         mDeleteDialog = new DeleteDialog(this);
-        mDeleteDialog.setProperties();
     }
 
     /*
@@ -324,6 +325,7 @@ public class LimitedGridActivity extends BaseGridActivity
     public boolean onActionItemClicked(ActionMode mode, MenuItem item){
         switch (item.getItemId()){
             case R.id.remove_multi:
+                mDeleteDialog.setProperties();
                 mDeleteDialog.show();
                 break;
             case R.id.share_multi:
@@ -424,7 +426,7 @@ public class LimitedGridActivity extends BaseGridActivity
         }
 
         public void setProperties(){
-            setMessage("Really delete selected images ?");
+            setMessage("Really delete ?");
 
             setButton(BUTTON_NEGATIVE, "No", new OnClickListener(){
                 @Override
