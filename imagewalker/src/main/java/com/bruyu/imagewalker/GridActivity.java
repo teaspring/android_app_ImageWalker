@@ -67,16 +67,11 @@ public class GridActivity extends BaseGridActivity {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(null != mActionMode){ // action mode is working
-                    if(selectedPosition != position){ // click another image, ignore this click
-                        return;
-                    }else if(mActionMode != null){ // click same image, cancel action mode
-                        mActionMode.finish();
-                        mActionMode = null;
-                        selectedPosition = -1;
-                    }
+                if(null != mActionMode){ // action mode is on
+                    selectedPosition = position;
+                    return;
                 }
-                startImageDetailActivity(position);
+                startImageDetailActivity(position); // action mode is off, start full screen
             }
         });
 
