@@ -354,7 +354,7 @@ public class LimitedGridActivity extends BaseGridActivity
     /*
     * send multi selected items in MultiChoice action mode
     * */
-    void operateSendItems(){
+    private void operateSendItems(){
         ArrayList<Uri> itemUris = new ArrayList<>();
         ArrayList<String> multiSelectedItems =
                 parseCheckedPositions(mGrid.getCheckedItemPositions());
@@ -376,7 +376,7 @@ public class LimitedGridActivity extends BaseGridActivity
     /*
     * delete multi selected items in MultiChoice action mode
     * */
-    void operateDeleteItems(){
+    private void operateDeleteItems(){
         ArrayList<String> multiSelectedItems =
                 parseCheckedPositions(mGrid.getCheckedItemPositions());
 
@@ -443,6 +443,5 @@ public class LimitedGridActivity extends BaseGridActivity
                 }
             });
         }
-
     };
 }

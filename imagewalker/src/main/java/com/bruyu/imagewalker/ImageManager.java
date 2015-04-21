@@ -220,9 +220,13 @@ public class ImageManager{
         synchronized(sInstance){
             for(ImageCompareRunnable runnable : runnableArray){
                 Thread thread = runnable.mImageTask.getCurrentThread();
-
                 if(null != thread){
                     thread.interrupt();
+                }
+
+                ImageTask task = (ImageTask)runnable.mImageTask;
+                if(null != task){
+                    sInstance.recycleTask(task);
                 }
             }
 

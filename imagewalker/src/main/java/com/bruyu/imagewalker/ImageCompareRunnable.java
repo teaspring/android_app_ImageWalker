@@ -71,7 +71,7 @@ class ImageCompareRunnable implements Runnable{
         try{
             mImageTask.handleCompareState(COMPARE_STATE_STARTED);
 
-            if(Thread.interrupted()){
+            if(mImageTask.getCurrentThread().isInterrupted() || testImage == null){
                 return;
             }
 
@@ -80,7 +80,7 @@ class ImageCompareRunnable implements Runnable{
             * */
             List<Mat> testHists = ImageTask.getMaskedHists(testImage);
 
-            if(Thread.interrupted()){
+            if(mImageTask.getCurrentThread().isInterrupted()){
                 return;
             }
 
@@ -91,6 +91,10 @@ class ImageCompareRunnable implements Runnable{
 
             if(null == baseHists || baseHists.isEmpty()){
                 baseHists = ImageManager.setBaseHists();
+            }
+
+            if(mImageTask.getCurrentThread().isInterrupted() || baseHists == null){
+                return;
             }
 
             /*
