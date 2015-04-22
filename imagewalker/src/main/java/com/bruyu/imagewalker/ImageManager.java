@@ -25,11 +25,12 @@ public class ImageManager{
     // Sets the Time Unit to seconds
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT;
 
-    // Sets the initial ThreadPool size to 4
-    private static final int CORE_POOL_SIZE = 4;
+    // Sets the initial ThreadPool size
+    // for MI1S with duo-core CPU, ThreadPool of 5 achieves the best performance
+    private static final int CORE_POOL_SIZE = 5;
 
-    // Sets the maximum ThreadPool size to 4
-    private static final int MAXIMUM_POOL_SIZE = 4;
+    // Sets the maximum ThreadPool size
+    private static final int MAXIMUM_POOL_SIZE = 5;
 
     /*
      * Note: this is the number of total available cores. On current versions of
