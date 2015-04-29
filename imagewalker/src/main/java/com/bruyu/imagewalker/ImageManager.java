@@ -25,13 +25,6 @@ public class ImageManager{
     // Sets the Time Unit to seconds
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT;
 
-    // Sets the initial ThreadPool size
-    // for MI1S with duo-core CPU, ThreadPool of 5 achieves the best performance
-    private static final int CORE_POOL_SIZE = 5;
-
-    // Sets the maximum ThreadPool size
-    private static final int MAXIMUM_POOL_SIZE = 5;
-
     /*
      * Note: this is the number of total available cores. On current versions of
      * Android, with devices that use plug-and-play cores, this will return less
@@ -40,6 +33,13 @@ public class ImageManager{
      * on MI1S, NUMBER_OF_CORES == 2
      * */
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+
+    // Sets the initial ThreadPool size
+    // for MI1S with duo-core CPU, ThreadPool of 5 achieves the best performance
+    private static final int CORE_POOL_SIZE = 2 * NUMBER_OF_CORES + 1;
+
+    // Sets the maximum ThreadPool size
+    private static final int MAXIMUM_POOL_SIZE = 2 * NUMBER_OF_CORES + 1;
 
     // Use a customized MaxHeap to sort the images dependent on their compare value with base image
     private static MaxHeap mMaxHeap;
