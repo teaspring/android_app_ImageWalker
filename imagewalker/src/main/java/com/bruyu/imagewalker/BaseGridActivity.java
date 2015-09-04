@@ -34,7 +34,7 @@ public class BaseGridActivity extends Activity{
         super.onCreate(savedInstanceState);
 
         /// stored in KB,used by constructor LruCache(maxSize)
-        /// on MI1S, maxMemory is 64MB
+        /// on MI1S, maxMemory is 65536KB, equals to 64MB
         final int maxMemory = (int)(Runtime.getRuntime().maxMemory() / 1024);
         /*
         * use portion of available memory for this memory cache
@@ -64,8 +64,6 @@ public class BaseGridActivity extends Activity{
                 R.drawable.allblack,
                 ThumbnailWidth,
                 ThumbnailHeight);
-
-        Log.i(TAG, "max memory is " + maxMemory);
     }
 
     public static void addBitmapToMemoryCache(String key, Bitmap bitmap){

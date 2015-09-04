@@ -215,9 +215,9 @@ public class LimitedGridActivity extends BaseGridActivity
         int imgCount = testImgNameList.size(); // remove base image from the repository
 
         if(status == imgCount){
-            StringBuilder builder = new StringBuilder("search in all ");
+            StringBuilder builder = new StringBuilder("search all ");
             builder.append(imgCount);
-            builder.append(" images is done");
+            builder.append(" images done");
 
             Toast.makeText(this, builder.toString(),Toast.LENGTH_SHORT).show();
         }else if(status < imgCount){
@@ -238,9 +238,9 @@ public class LimitedGridActivity extends BaseGridActivity
 
         if(status == count){
             progressBar = 100;  // 100%
-            Toast.makeText(this, "Searching " + count + " images done.",
+            Toast.makeText(this, "Search " + count + " images done",
                     Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "searching " + count + " images done");
+            Log.d(TAG, "search " + count + " images done");
 
             return;
         }

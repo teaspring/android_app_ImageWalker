@@ -77,8 +77,11 @@ public class ImageDetailActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case R.id.action_settings:
-                Toast.makeText(ImageDetailActivity.this, "position=" + itemPosition,
-                        Toast.LENGTH_SHORT).show();
+                StringBuilder builder = new StringBuilder(mPager.getCurrentItem());
+                builder.append("/");
+                builder.append(mPagerAdapter.getCount());
+                Toast.makeText(ImageDetailActivity.this,
+                        builder.toString(), Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
